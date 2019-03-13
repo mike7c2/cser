@@ -3,23 +3,6 @@
 
 CSER provides tools to simplify and automate some of the work involved in creating serial interfaces on embedded systems.
 
-## Workflow
-
-The workflow is to first create a target description by using cser\_parser.py to parse a set of function protoypes. The descriptor will be saved in mytargetdescriptor.json 
-
-~~~~
-cser_parser.py myprototypes mytargetdescriptor.json
-~~~~
-
-Next, the target platform code should be generated from the target descriptor, two output files, cser\_impl.c and cser\_defs.h will be created in the output directory gen\_output
-
-~~~~
-cser_generater.py mytargetdescriptor.json gen_output/
-~~~~
-
-The output source files should now be integrated with the target system's code. The function cser\_return\_data\_cback (prototype in cser\_prot.h) should be implemented and the system should be set up to call cser\_process\_data with incoming data. 
-
-
 ## CSER Debug
 
 CSER debug is a _printf_ replacement for small systems. CSER allows the user to save memory and serial bandwidth on their system by carrying out formatting on the host. If HASH\_MODE is enabled then strings are stored in a descriptor on the host instead of on the target saving more memory and in most cases significantly reducing serial bandwidth required to send debug messages.
