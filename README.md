@@ -1,4 +1,3 @@
-
 ### CSER
 
 CSER provides tools to simplify and automate some of the work involved in creating serial interfaces on embedded systems.
@@ -15,19 +14,42 @@ If the HASH\_MODE define in cser\_dbg.h is enabled then a set of descriptors mus
 
 To send messages from target code use the function cser\_dbg(...). All arguments must be lvalues (i.e. they must work with the & operator). 
 
-This means that things like:
+This means that things like
 ~~~~
 int i = 12;
 cser_dbg("OMG HAALP, %d\n", i);
 ~~~~
-will work fine, whilst things like:
+will work fine
+~~~
+INFO:root:Log Msg:OMG HAALP, 12
+~~~
+
+whilst things like
 ~~~~
 int i = 12;
 cser_dbg("OMG HAALP, %d\n", i + 2);
 ~~~~
-will not.
+will not
+~~~
+In file included from cser_dbg_test.c:5:0:
+cser_dbg.h:61:66: error: lvalue required as unary ‘&’ operand
+ #define CSER_DBG2(str,a) cser_dbg_2arg(CSER_HASH(str), (uint8_t*)&(a), sizeof(a)); \
+                                                                  ^
+cser_dbg.h:54:33: note: in expansion of macro ‘CSER_DBG2’
+ #define CSER__IMPL2(count, ...) CSER_DBG ## count (__VA_ARGS__)
+                                 ^~~~~~~~
+cser_dbg.h:55:32: note: in expansion of macro ‘CSER__IMPL2’
+ #define CSER__IMPL(count, ...) CSER__IMPL2(count, __VA_ARGS__)
+                                ^~~~~~~~~~~
+cser_dbg.h:112:23: note: in expansion of macro ‘CSER__IMPL’
+ #define cser_dbg(...) CSER__IMPL(CSER_VA_NARGS(__VA_ARGS__), __VA_ARGS__)
+                       ^~~~~~~~~~
+cser_dbg_test.c:32:5: note: in expansion of macro ‘cser_dbg’
+     cser_dbg("OMG HAALP, %d\n", i + 2);
+     ^~~~~~~~
+~~~
 
-Note that the first argument must be a string literal in order for HASH\_MODE to work. 
+Note that the first argument must be a string literal in order for HASH\_MODE to work. It also *must* not have a line end appended.
 
 cser\_dbg internally uses sizeof to determine the amount of data to send for each argument. This means that structs and arrays may be sent if their size is known at compile time. cser\_dbg recognises non-standard format specifiers such as %H to print an array in hex. 
 
@@ -41,14 +63,13 @@ struct blorg{
 	uint8_t e;
 } blerg = {'b','l','e','r','g'};
 
-cser_dbg("Blarg? %s, %h, %h\n", blarg, blarg, blerg);
+cser_dbg("Blarg? %s, %H, %H\n", blarg, blarg, blerg);
 ~~~~
 
-With cser_dbg it's complicated (but possible!) to send variable length data. A specialised function for sending arrays has been provided to help.
-
+A specialised function for sending arrays with dynamic length has been provided.
 ~~~~
 int is[10] = {0,1,2,3,4,5,6,7,8,9};
-cser_dbg_array("DATAS %h", is, 3);
+cser_dbg_array("DATAS %H", is, 3);
 ~~~~
 
 ### Emitting messages more haxily
@@ -68,4 +89,3 @@ const uint8_t * str_ptr = str;
 int no_of_cats = 10;
 cser_dbg_3arg(str, sizeof(str), &no_of_cats, sizeof(no_of_cats), str_ptr, 4); 
 ~~~~
-

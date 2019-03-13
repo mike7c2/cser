@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdint.h>
 
@@ -11,6 +10,27 @@ FILE * test_data;
 void cser_test_putc(uint8_t x)
 {
     fputc(x, test_data);
+}
+
+uint8_t blarg[5] = {'b','l','a','r','g'};
+struct blorg{
+    uint8_t a;
+    uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+} blerg = {'b','l','e','r','g'};
+
+void readme_examples(){
+    cser_dbg("Blarg? %s", blarg);
+    cser_dbg("Blarg? %H", blarg);
+    cser_dbg("Blerg? %H", blerg);
+
+    int i = 12;
+    cser_dbg("OMG HAALP, %d", i);
+
+    int is[10] = {0,1,2,3,4,5,6,7,8,9};
+    cser_dbg_array("DATAS %H", is, 3);
 }
 
 int main(int argc, char * argv[])
@@ -89,7 +109,9 @@ int main(int argc, char * argv[])
     cser_dbg_array("An array %H", array, 12);
     
     cser_trace();
-    
+
+    readme_examples();
+
     fflush(test_data);
     fclose(test_data);
 }
