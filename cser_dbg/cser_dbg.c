@@ -21,7 +21,7 @@
 #ifdef CSER_DBG_HASH_MODE
 size_t cser_dbg_1arg(uint32_t hash)
 #else
-size_t cser_dbg_1arg(const uint8_t *restrict s, size_t s_sz)
+size_t cser_dbg_1arg(const void *restrict s, size_t s_sz)
 #endif
 {
 #ifdef CSER_DBG_HASH_MODE
@@ -62,9 +62,9 @@ size_t cser_dbg_1arg(const uint8_t *restrict s, size_t s_sz)
 }
 
 #ifdef CSER_DBG_HASH_MODE
-size_t cser_dbg_2arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz)
+size_t cser_dbg_2arg(uint32_t hash, const void *restrict a, size_t a_sz)
 #else
-size_t cser_dbg_2arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *restrict a, size_t a_sz)
+size_t cser_dbg_2arg(const void *restrict s, size_t s_sz, const void *restrict a, size_t a_sz)
 #endif
 {
 #ifdef CSER_DBG_HASH_MODE
@@ -101,7 +101,7 @@ size_t cser_dbg_2arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *rest
     
     for ( i = 0; i < a_sz; i++)
     {
-        t = a[i];
+        t = ((uint8_t*)a)[i];
         cser_dbg_putc(t);
         checksum += t;
     }
@@ -113,9 +113,9 @@ size_t cser_dbg_2arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *rest
 
 
 #ifdef CSER_DBG_HASH_MODE
-size_t cser_dbg_3arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz)
+size_t cser_dbg_3arg(uint32_t hash, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz)
 #else
-size_t cser_dbg_3arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz)
+size_t cser_dbg_3arg(const void *restrict s, size_t s_sz, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz)
 #endif
 {
 #ifdef CSER_DBG_HASH_MODE
@@ -152,14 +152,14 @@ size_t cser_dbg_3arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *rest
     
     for ( i = 0; i < a_sz; i++)
     {
-        t = a[i];
+        t = ((uint8_t*)a)[i];
         cser_dbg_putc(t);
         checksum += t;
     }
     
     for ( i = 0; i < b_sz; i++)
     {
-        t = b[i];
+        t = ((uint8_t*)b)[i];
         cser_dbg_putc(t);
         checksum += t;
     }
@@ -171,9 +171,9 @@ size_t cser_dbg_3arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *rest
 
 
 #ifdef CSER_DBG_HASH_MODE
-size_t cser_dbg_4arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz, const uint8_t *restrict c, size_t c_sz)
+size_t cser_dbg_4arg(uint32_t hash, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz, const void *restrict c, size_t c_sz)
 #else
-size_t cser_dbg_4arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz, const uint8_t *restrict c, size_t c_sz)
+size_t cser_dbg_4arg(const void *restrict s, size_t s_sz, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz, const void *restrict c, size_t c_sz)
 #endif
 {
 #ifdef CSER_DBG_HASH_MODE
@@ -210,21 +210,21 @@ size_t cser_dbg_4arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *rest
     
     for ( i = 0; i < a_sz; i++)
     {
-        t = a[i];
+        t = ((uint8_t*)a)[i];
         cser_dbg_putc(t);
         checksum += t;
     }
     
     for ( i = 0; i < b_sz; i++)
     {
-        t = b[i];
+        t = ((uint8_t*)b)[i];
         cser_dbg_putc(t);
         checksum += t;
     }
     
     for ( i = 0; i < c_sz; i++)
     {
-        t = c[i];
+        t = ((uint8_t*)c)[i];
         cser_dbg_putc(t);
         checksum += t;
     }

@@ -66,9 +66,9 @@ extern void cser_test_putc(uint8_t x);
     CSER_ECHO_STR(str)
 
 size_t cser_dbg_1arg(uint32_t hash);
-size_t cser_dbg_2arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz);
-size_t cser_dbg_3arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz);
-size_t cser_dbg_4arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz, const uint8_t *restrict c, size_t c_sz);
+size_t cser_dbg_2arg(uint32_t hash, const void *restrict a, size_t a_sz);
+size_t cser_dbg_3arg(uint32_t hash, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz);
+size_t cser_dbg_4arg(uint32_t hash, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz, const void *restrict c, size_t c_sz);
 
 #define cser_dbg_ar(str, ar, sz) cser_dbg_2arg(CSER_HASH(str), ar, sz); \
     CSER_ECHO_STR(str)
@@ -80,10 +80,10 @@ size_t cser_dbg_4arg(uint32_t hash, const uint8_t *restrict a, size_t a_sz, cons
 #define CSER_DBG3(str,a,b) cser_dbg_3arg((uint8_t*)&(str), sizeof(str), (uint8_t*)&(a), sizeof(a), (uint8_t*)&(b), sizeof(b))
 #define CSER_DBG4(str,a,b,c) cser_dbg_4arg((uint8_t*)&(str), sizeof(str), (uint8_t*)&(a), sizeof(a), (uint8_t*)&(b), sizeof(b), (uint8_t*)&(c), sizeof(c))
 
-size_t cser_dbg_1arg(const uint8_t *restrict s, size_t s_sz);
-size_t cser_dbg_2arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *restrict a, size_t a_sz);
-size_t cser_dbg_3arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz);
-size_t cser_dbg_4arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *restrict a, size_t a_sz, const uint8_t *restrict b, size_t b_sz, const uint8_t *restrict c, size_t c_sz);
+size_t cser_dbg_1arg(const void *restrict s, size_t s_sz);
+size_t cser_dbg_2arg(const void *restrict s, size_t s_sz, const void *restrict a, size_t a_sz);
+size_t cser_dbg_3arg(const void *restrict s, size_t s_sz, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz);
+size_t cser_dbg_4arg(const void *restrict s, size_t s_sz, const void *restrict a, size_t a_sz, const void *restrict b, size_t b_sz, const void *restrict c, size_t c_sz);
 
 #define cser_dbg_ar(str, ar, sz) cser_dbg_2arg(str, sizeof(str), ar, sz);
 
@@ -113,7 +113,6 @@ size_t cser_dbg_4arg(const uint8_t *restrict s, size_t s_sz, const uint8_t *rest
 
 /**
  * Send a string and an array with a dynamic length
- * 
  */
 #define cser_dbg_array(str, ar, sz) cser_dbg_ar(str, ar, sz)
 
