@@ -59,23 +59,24 @@ def get_messages_from_pragma(filename):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='')
+    parser = argparse.ArgumentParser(
+        description="Converts binary streams of cser_dbg data to meaningful log output"
+    )
     parser.add_argument('--messages', default=None, action='store', type=str,
                         help='Build log containing hash pragmas (required for hash mode)')
-    parser.add_argument('--serial', default=None, action='store', type=str, help='Serial port')
-    parser.add_argument('--ip', default=None, action='store', type=str, help='IP address')
-    parser.add_argument('--port', default=None, action='store', type=str, help='IP port')
-    parser.add_argument('--file', default=None, action='store', type=str, help='File to stream from')
-    parser.add_argument('--cser-mode', default=False, action='store_true',
-                        help='Pass true to connect to a target which has full cser installed')
-
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--serial', default=None, action='store', type=str, help='Serial port i.e. /dev/ttyUSB0')
+    group.add_argument('--ip', default=None, action='store', type=str, help='[IP address]:[port] i.e. 127.0.0.1:1234')
+    group.add_argument('--file', default=None, action='store', type=str, help='File to stream from i.e. mydata.bin')
+    
     args = parser.parse_args()
 
     stream = None
     if args.serial:
         stream = cser_stream.SerialStream(args.serial)
-    elif args.ip and args.port:
-        stream = cser_stream.SocketStream(args.ip, int(args.port))
+    elif args.ip:
+        ip, port = args.ip.split(":")
+        stream = cser_stream.SocketStream(ip, int(port))
     elif args.file:
         stream = cser_stream.FileStream(args.file)
 
@@ -83,7 +84,7 @@ def main():
         logging.error("No stream provided")
         sys.exit(0)
 
-    target = CserDebugTarget(stream, get_messages_from_pragma(args.messages), cser_mode=args.cser_mode)
+    target = CserDebugTarget(stream, get_messages_from_pragma(args.messages), cser_mode=False)
 
     def handler(signum, frame):
         target.stop()

@@ -1,14 +1,46 @@
-### CSER
+# CSER
 
 CSER provides tools to simplify and automate some of the work involved in creating serial interfaces on embedded systems.
 
+## Installing
+
+CSER can be installed as a python package with 
+```
+python setup.py install
+```
+
+## Running
+
+`cser-dbg` can be run from the command line once the package is installed
+```
+$ cser-dbg --help
+usage: cser-dbg [-h] [--messages MESSAGES]
+                [--serial SERIAL | --ip IP | --file FILE]
+
+Converts binary streams of cser_dbg data to meaningful log output
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --messages MESSAGES  Build log containing hash pragmas (required for hash
+                       mode)
+  --serial SERIAL      Serial port i.e. /dev/ttyUSB0
+  --ip IP              [IP address]:[port] i.e. 127.0.0.1:1234
+  --file FILE          File to stream from i.e. mydata.bin
+```
+
+`cser-dbg` can take a data stream from a serial port, a file or a tcp socket, the source is specified by choosing one of the `--serial`, `--ip`, `--file` arguments. 
+
+```
+cser-dbg --ip 127.0.0.1:1234
+```
+
 ## CSER Debug
 
-CSER debug is a _printf_ replacement for small systems. CSER allows the user to save memory and serial bandwidth on their system by carrying out formatting on the host. If HASH\_MODE is enabled then strings are stored in a descriptor on the host instead of on the target saving more memory and in most cases significantly reducing serial bandwidth required to send debug messages.
+CSER debug is a _printf_ replacement for small systems. CSER allows the user to save memory, cpu time and serial bandwidth on their system by carrying out formatting on the host. If HASH\_MODE is enabled then strings are stored in a descriptor on the host instead of on the target saving more memory and in most cases significantly reducing serial bandwidth required to send debug messages.
 
 To use CSER Debug include cser\_dbg.c and cser\_dbg.h in your project and provide an implementation of the function cser\_dbg\_putc connected to a serial interface. Use the cser\_dbg\_target.py on the host, connect it to the other end of the serial interface and messages will be shown. 
 
-If the HASH\_MODE define in cser\_dbg.h is enabled then a set of descriptors must be generated and passed to cser\_dbg\_target.py to allow the parser to create output. To generate a descriptor the target toolchain must support the #pragma message directive. A message will be emitted in the build log for each call to cser\_dbg. Pass the build log to cser\_dbg\_target.py with the --messages switch.  
+If the HASH\_MODE define in cser\_dbg.h is enabled then a set of descriptors must be generated and passed to cser\_dbg\_target.py to allow the parser to create output. To generate a descriptor the target toolchain must support the #pragma message directive. A message will be emitted in the build log for each call to cser\_dbg. Pass the build log to `cser-dbg` with the `--messages` switch.
 
 ### Emitting messages
 
@@ -20,9 +52,9 @@ int i = 12;
 cser_dbg("OMG HAALP, %d\n", i);
 ~~~~
 will work fine
-~~~
+~~~~
 INFO:root:Log Msg:OMG HAALP, 12
-~~~
+~~~~
 
 whilst things like
 ~~~~
@@ -30,7 +62,7 @@ int i = 12;
 cser_dbg("OMG HAALP, %d\n", i + 2);
 ~~~~
 will not
-~~~
+~~~~
 In file included from cser_dbg_test.c:5:0:
 cser_dbg.h:61:66: error: lvalue required as unary ‘&’ operand
  #define CSER_DBG2(str,a) cser_dbg_2arg(CSER_HASH(str), (uint8_t*)&(a), sizeof(a)); \
@@ -47,7 +79,7 @@ cser_dbg.h:112:23: note: in expansion of macro ‘CSER__IMPL’
 cser_dbg_test.c:32:5: note: in expansion of macro ‘cser_dbg’
      cser_dbg("OMG HAALP, %d\n", i + 2);
      ^~~~~~~~
-~~~
+~~~~
 
 Note that the first argument must be a string literal in order for HASH\_MODE to work. It also *must* not have a line end appended.
 
@@ -63,13 +95,23 @@ struct blorg{
 	uint8_t e;
 } blerg = {'b','l','e','r','g'};
 
-cser_dbg("Blarg? %s, %H, %H\n", blarg, blarg, blerg);
+cser_dbg("Blarg? %s", blarg);
+cser_dbg("Blarg? %H", blarg);
+cser_dbg("Blerg? %H", blerg);
+~~~~
+~~~~
+INFO:root:Log Msg:Blarg? blarg
+INFO:root:Log Msg:Blarg? 0x62:0x6c:0x61:0x72:0x67
+INFO:root:Log Msg:Blerg? 0x62:0x6c:0x65:0x72:0x67
 ~~~~
 
 A specialised function for sending arrays with dynamic length has been provided.
 ~~~~
 int is[10] = {0,1,2,3,4,5,6,7,8,9};
 cser_dbg_array("DATAS %H", is, 3);
+~~~~
+~~~~
+INFO:root:Log Msg:DATAS 0x0:0x0:0x0
 ~~~~
 
 ### Emitting messages more haxily
