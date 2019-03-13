@@ -36,6 +36,16 @@ class FloatToken(Token):
         return (4, ret)
 
 
+class StringToken(Token):
+    def __init__(self):
+        super(StringToken, self).__init__("%s")
+
+    def token_parse(self, string, data):
+        ret = "".join(data)
+        width = len(data)
+        return (width, ret)
+
+
 class ArrayToken(Token):
     def __init__(self):
         super(ArrayToken, self).__init__("%H")
@@ -161,7 +171,7 @@ class CserDebugParser(object):
             self.hash_mode = False
 
         self.dbg_messages = messages
-        self.parser = TokenParser([IntToken(), ArrayToken(), FloatToken()])
+        self.parser = TokenParser([IntToken(), ArrayToken(), FloatToken(), StringToken()])
         self._handler = handler
 
     def receive_packet(self, msg):
